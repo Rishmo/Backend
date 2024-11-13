@@ -5,6 +5,10 @@ const path =  require("path"); // requiring path for ejs (for running server out
 const port= 8080; // for our local server
 
 
+// requiring uuid for creating unique id for post
+const { v4: uuidv4 } = require('uuid');
+
+
 // serving static files
 
 // only runs under ejsdir
@@ -28,19 +32,19 @@ let posts = [ // haven't used const becz it will create issue if we delete it
     {
         username : "Moon Sahu",
         content: "Learnig WEB DEVELOPMENT",
-        id : "1a",
+        id : uuidv4(),
     },
 
     {
         username : "Ravi",
         content: "workaholic",
-        id : "2b",
+        id : uuidv4(),
     },
 
     {
         username : "Tuls",
         content: "Loves shopping",
-        id : "3c",
+        id : uuidv4(),
     },
 ];
 
@@ -57,7 +61,8 @@ app.get("/posts/new", (req, res) => { // create route post (serve the form)
 
 app.post("/posts", (req, res) => { // create route post (add the new post)
     let {username, content} = req.body;
-    posts.push({username, content});
+    let id = uuidv4();
+    posts.push({id, username, content});
     //res.send("post request working");
     res.redirect("/posts") //redirect to quora page (by default it will redirect to get)
 
@@ -65,9 +70,19 @@ app.post("/posts", (req, res) => { // create route post (add the new post)
 
 app.get("/posts/:id", (req, res) => { // to get only one post
     let {id} = req.params;
+    console.log(id);
     let post = posts.find((p) => id === p.id);
-    console.log(post);
-    res.send("request working");
+    //console.log(post);
+    //res.send("request working");
+    res.render("show.ejs", { post });
+});
+
+
+app.patch("/posts/:id", (req, res) => { 
+    let {id} = req.params;
+    let newContent = req.body.content;
+    console.log(newContent);
+    res.send("patch request working");
 });
 
 
